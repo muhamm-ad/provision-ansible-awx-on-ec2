@@ -3,6 +3,11 @@ output "ec2_instance_id" {
   value       = aws_instance.awx_server.id
 }
 
+output "aws_region" {
+  description = "The AWS region containing the AWX EC2 instance."
+  value       = var.aws_region
+}
+
 output "public_ip" {
   description = "The public IP of the AWX EC2 instance."
   value       = aws_instance.awx_server.public_ip

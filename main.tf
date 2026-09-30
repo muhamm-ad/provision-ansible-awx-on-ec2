@@ -8,10 +8,6 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.0"
     }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.0"
-    }
   }
   required_version = ">= 1.8"
 }
@@ -98,13 +94,6 @@ resource "aws_key_pair" "awx_server_key_pair" {
   public_key = tls_private_key.awx_server_tls_private_key.public_key_openssh
 }
 
-# Save that private key into a file on local
-resource "local_file" "private_key" {
-  content  = tls_private_key.awx_server_tls_private_key.private_key_pem
-  filename = "${path.module}/my_awx_private_key.pem"
-  file_permission = "0400"
-}
-
 data "aws_subnets" "subnets" {
   filter {
     name = "vpc-id"
@@ -136,7 +125,6 @@ resource "aws_instance" "awx_server" {
       type = "ssh"
       host = self.public_ip
       user = "ubuntu"
-      # Use the *private* key from the tls_private_key
       private_key = tls_private_key.awx_server_tls_private_key.private_key_pem
     }
   }
